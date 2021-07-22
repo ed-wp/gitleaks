@@ -52,6 +52,7 @@ type TomlLoader struct {
 		File        string
 		Path        string
 		ReportGroup int
+		MultiLine   bool
 		Tags        []string
 		Entropies   []struct {
 			Min   string

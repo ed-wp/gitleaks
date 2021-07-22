@@ -88,8 +88,42 @@ func (cs *CommitScanner) Scan() (Report, error) {
 					continue
 				}
 
-				// Check individual file path ONLY rules
+				lineLookup := make(map[string]bool)
+
+				// Check individual file path ONLY rules or multilines
 				for _, rule := range cs.cfg.Rules {
+					if rule.MultiLine {
+						currentLineScan := 0
+						for {
+							offender := rule.InspectAfterLine(currentLineScan, chunk.Content())
+							if offender.IsEmpty() {
+								break
+							}
+
+							if cs.cfg.Allowlist.RegexAllowed(chunk.Content()) {
+								break
+							}
+
+							if rule.File.String() != "" && !rule.HasFileLeak(filepath.Base(to.Path())) {
+								break
+							}
+							if rule.Path.String() != "" && !rule.HasFilePathLeak(to.Path()) {
+								break
+							}
+
+							currentLineScan = offender.LineNumber + 1
+							leak := NewLeak(offender.ToString(), offender.ToString(), offender.LineNumber).WithCommit(cs.commit).WithEntropy(offender.EntropyLevel)
+							leak.File = to.Path()
+							leak.LineNumber = extractLine(patchContent, leak, lineLookup)
+							leak.RepoURL = cs.opts.RepoURL
+							leak.Repo = cs.repoName
+							leak.LeakURL = leak.URL()
+							leak.Rule = rule.Description
+							leak.Tags = strings.Join(rule.Tags, ", ")
+							leak.Log(cs.opts)
+						}
+					}
+
 					if rule.CommitAllowed(cs.commit.Hash.String()) {
 						continue
 					}
@@ -110,14 +144,12 @@ func (cs *CommitScanner) Scan() (Report, error) {
 					}
 				}
 
-				lineLookup := make(map[string]bool)
-
 				// Check the actual content
 				for _, line := range strings.Split(chunk.Content(), "\n") {
 					for _, rule := range cs.cfg.Rules {
 						if rule.AllowList.FileAllowed(filepath.Base(to.Path())) ||
 							rule.AllowList.PathAllowed(to.Path()) ||
-							rule.AllowList.CommitAllowed(cs.commit.Hash.String()) {
+							rule.AllowList.CommitAllowed(cs.commit.Hash.String()) || rule.MultiLine {
 							continue
 						}
 						offender := rule.Inspect(line)

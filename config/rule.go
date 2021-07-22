@@ -4,6 +4,7 @@ import (
 	"math"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 // Offender is a struct that contains the information matched when searching
@@ -11,6 +12,7 @@ import (
 type Offender struct {
 	Match        string
 	EntropyLevel float64
+	LineNumber   int
 }
 
 // IsEmpty checks to see if nothing was found in the match
@@ -37,6 +39,7 @@ type Rule struct {
 	Tags        []string
 	AllowList   AllowList
 	Entropies   []Entropy
+	MultiLine   bool
 }
 
 // Inspect checks the content of a line for a leak
@@ -54,6 +57,54 @@ func (r *Rule) Inspect(line string) *Offender {
 	// check if offender is allowed
 	// EntropyLevel -1 means not checked
 	if r.RegexAllowed(line) {
+		return &Offender{
+			Match:        "",
+			EntropyLevel: -1,
+		}
+	}
+
+	// check entropy
+	groups := r.Regex.FindStringSubmatch(match)
+	entropyWithinRange, entropyLevel := r.CheckEntropy(groups)
+
+	if len(r.Entropies) != 0 && !entropyWithinRange {
+		return &Offender{
+			Match:        "",
+			EntropyLevel: entropyLevel,
+		}
+	}
+
+	// 0 is a match for the full regex pattern
+	if 0 < r.ReportGroup && r.ReportGroup < len(groups) {
+		match = groups[r.ReportGroup]
+	}
+
+	return &Offender{
+		Match:        match,
+		EntropyLevel: entropyLevel,
+	}
+}
+
+// Inspect checks the content of a line for a leak
+func (r *Rule) InspectAfterLine(currentLine int, fileText string) *Offender {
+
+	// get text after line
+	linesArray := strings.Split(fileText, "\n")
+	extractedText := strings.Join(linesArray[currentLine:len(linesArray)-1], ",")
+
+	match := r.Regex.FindString(extractedText)
+
+	// EntropyLevel -1 means not checked
+	if match == "" {
+		return &Offender{
+			Match:        "",
+			EntropyLevel: -1,
+		}
+	}
+
+	// check if offender is allowed
+	// EntropyLevel -1 means not checked
+	if r.RegexAllowed(extractedText) {
 		return &Offender{
 			Match:        "",
 			EntropyLevel: -1,
