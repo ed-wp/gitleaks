@@ -178,6 +178,7 @@ The rules are written in [TOML](https://github.com/toml-lang/toml) as defined in
   file = '''a-file-name-regex'''
   path = '''a-file-path-regex'''
   tags = ["tag","another tag"]
+  multline = true # boolean to enable multline regex ( Default : false)
   [[rules.entropies]] # note these are strings, not floats
     Min = "3.5"
     Max = "4.5"
@@ -284,6 +285,8 @@ These users are [sponsors](https://github.com/sponsors/zricethezav) of gitleaks:
 
 - [Adam Shannon](https://github.com/adamdecaf)
 - [ProjectDiscovery](https://projectdiscovery.io/#/)
+- [Ben "Ihavespoons"](https://github.com/ihavespoons)
+- [Henry Sachs](https://github.com/henrysachs)
 
 
 #### Logo Attribution

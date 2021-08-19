@@ -4,6 +4,7 @@ import (
 	"math"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 // Offender is a struct that contains the information matched when searching
@@ -11,6 +12,7 @@ import (
 type Offender struct {
 	Match        string
 	EntropyLevel float64
+	Line         int
 }
 
 // IsEmpty checks to see if nothing was found in the match
@@ -34,6 +36,7 @@ type Rule struct {
 	File        *regexp.Regexp
 	Path        *regexp.Regexp
 	ReportGroup int
+	Multiline   bool
 	Tags        []string
 	AllowList   AllowList
 	Entropies   []Entropy
@@ -80,6 +83,42 @@ func (r *Rule) Inspect(line string) *Offender {
 		Match:        match,
 		EntropyLevel: entropyLevel,
 	}
+}
+
+func (r *Rule) InspectFile(fileLines string) []Offender {
+	fileLines = regexp.MustCompile(`[\t\r\n]+`).ReplaceAllString(strings.TrimSpace(fileLines), "\n")
+	matches := r.Regex.FindAllStringSubmatch(fileLines, -1)
+	// EntropyLevel -1 means not checked
+	if matches == nil {
+		return nil
+	}
+	// check if offender is allowed
+	// EntropyLevel -1 means not checked
+	if r.RegexAllowed(fileLines) {
+		return nil
+	}
+
+	// check entropy
+	var result []Offender
+
+	for _, m := range matches {
+		lineToDetect := strings.Split(m[0], "\n")[0]
+		fileLinesList := strings.Split(fileLines, "\n")
+		line := 1
+		for i, _ := range fileLinesList {
+			if strings.Contains(fileLinesList[i], lineToDetect) {
+				line = i
+			}
+		}
+
+		result = append(result, Offender{
+			Match:        m[0],
+			EntropyLevel: -1,
+			Line:         line,
+		})
+
+	}
+	return result
 }
 
 // RegexAllowed checks if the content is allowlisted
