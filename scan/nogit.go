@@ -10,8 +10,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/zricethezav/gitleaks/v7/config"
-	"github.com/zricethezav/gitleaks/v7/options"
+	"github.com/ed-wp/gitleaks/v7/config"
+	"github.com/ed-wp/gitleaks/v7/options"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -30,7 +30,7 @@ func NewNoGitScanner(opts options.Options, cfg config.Config) *NoGitScanner {
 	}
 
 	// no-git scans should ignore .git folders by default
-	// issue: https://github.com/zricethezav/gitleaks/issues/474
+	// issue: https://github.com/ed-wp/gitleaks/issues/474
 	// ngs.cfg.Allowlist
 	err := ngs.cfg.Allowlist.IgnoreDotGit()
 	if err != nil {

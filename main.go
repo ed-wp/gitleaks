@@ -5,9 +5,9 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/zricethezav/gitleaks/v7/config"
-	"github.com/zricethezav/gitleaks/v7/options"
-	"github.com/zricethezav/gitleaks/v7/scan"
+	"github.com/ed-wp/gitleaks/v7/config"
+	"github.com/ed-wp/gitleaks/v7/options"
+	"github.com/ed-wp/gitleaks/v7/scan"
 
 	"github.com/hako/durafmt"
 	log "github.com/sirupsen/logrus"

@@ -6,7 +6,7 @@ RUN GO111MODULE=on CGO_ENABLED=0 go build -o bin/gitleaks -ldflags "-X="${ldflag
 
 FROM alpine:3.11
 RUN apk add --no-cache bash git openssh
-COPY --from=build /go/src/github.com/zricethezav/gitleaks/bin/* /usr/bin/
+COPY --from=build /go/src/github.com/ed-wp/gitleaks/bin/* /usr/bin/
 ENTRYPOINT ["gitleaks"]
 
 # How to use me :

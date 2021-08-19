@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-git/go-git/v5"
 
-	"github.com/zricethezav/gitleaks/v7/config"
-	"github.com/zricethezav/gitleaks/v7/options"
+	"github.com/ed-wp/gitleaks/v7/config"
+	"github.com/ed-wp/gitleaks/v7/options"
 )
 
 // Scanner abstracts unique scanner internals while exposing the Scan function which

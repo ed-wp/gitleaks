@@ -5,7 +5,7 @@ import (
 )
 
 // used for ignoring .git directories when the --no-git flag is set
-// related issue: https://github.com/zricethezav/gitleaks/issues/486
+// related issue: https://github.com/ed-wp/gitleaks/issues/486
 const dotGit = `/\.git/`
 
 // AllowList is struct containing items that if encountered will allowlist

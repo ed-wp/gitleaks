@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/ed-wp/gitleaks/v7/config"
+	"github.com/ed-wp/gitleaks/v7/options"
+	"github.com/ed-wp/gitleaks/v7/version"
 	"github.com/sirupsen/logrus"
-	"github.com/zricethezav/gitleaks/v7/config"
-	"github.com/zricethezav/gitleaks/v7/options"
-	"github.com/zricethezav/gitleaks/v7/version"
 )
 
 // Report is a container for leaks and number of commits scanned

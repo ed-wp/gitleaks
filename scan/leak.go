@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zricethezav/gitleaks/v7/options"
+	"github.com/ed-wp/gitleaks/v7/options"
 
 	"github.com/go-git/go-git/v5/plumbing/object"
 )

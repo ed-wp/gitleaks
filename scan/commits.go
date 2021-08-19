@@ -1,9 +1,9 @@
 package scan
 
 import (
+	"github.com/ed-wp/gitleaks/v7/config"
+	"github.com/ed-wp/gitleaks/v7/options"
 	"github.com/go-git/go-git/v5"
-	"github.com/zricethezav/gitleaks/v7/config"
-	"github.com/zricethezav/gitleaks/v7/options"
 )
 
 // CommitsScanner is a commit scanner
