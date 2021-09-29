@@ -86,7 +86,6 @@ func (r *Rule) Inspect(line string) *Offender {
 }
 
 func (r *Rule) InspectFile(fileLines string) []Offender {
-	fileLines = regexp.MustCompile(`[\t\r\n]+`).ReplaceAllString(strings.TrimSpace(fileLines), "\n")
 	matches := r.Regex.FindAllStringSubmatch(fileLines, -1)
 	// EntropyLevel -1 means not checked
 	if matches == nil {
